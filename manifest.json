@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Quiet Work",
+  "version": "1.0",
+  "description": "Disables external links when in learning mode.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "contextMenus",
+    "scripting",
+    "windows",
+    "system.display"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["sidebar.css"],
+      "js": ["highlight.js", "sidebar.js", "content.js", "search.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "host_permissions": ["<all_urls>"],
+    "web_accessible_resources": [{
+    "resources": ["blocked.html", "search.html", "search.js"],
+    "matches": ["<all_urls>"]
+  }]
+}
