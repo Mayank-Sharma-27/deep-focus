@@ -156,11 +156,15 @@ function saveNoteToHighlight(highlightId, note) {
 // Function to load highlights for the current page
 function loadCurrentPageHighlights() {
   const hostname = window.location.hostname;
-  chrome.storage.local.get([hostname], (items) => {
-    const highlights = items[hostname] || [];
-    displayHighlights(highlights);
-  });
-  displayWebsites();
+  if (hostname.includes("youtube.com")) {
+    loadYouTubeNotes();
+    addYouTubeNoteSection(); // Add this line to ensure the note section is added
+  } else {
+    chrome.storage.local.get([hostname], (items) => {
+      const highlights = items[hostname] || [];
+      displayHighlights(highlights);
+    });
+  }
 }
 // Function to remove a highlight
 function removeHighlight(highlightId) {
@@ -256,6 +260,41 @@ function loadYouTubeNotes() {
       container.appendChild(videoDiv);
     });
   });
+}
+
+function addYouTubeNoteSection() {
+  const youtubeNotesContainer = document.getElementById(
+    "youtube-notes-container"
+  );
+  youtubeNotesContainer.innerHTML = "";
+
+  const title = document.createElement("h3");
+  title.textContent = "YouTube Notes";
+  title.style.color = "white"; // Set the color to white for the title
+  youtubeNotesContainer.appendChild(title);
+
+  const addNoteButton = document.createElement("button");
+  addNoteButton.textContent = "Add Note";
+  addNoteButton.onclick = () => {
+    const video = document.querySelector("video");
+    if (video) {
+      const currentTime = video.currentTime;
+      const note = prompt("Enter your note:");
+      if (note) {
+        const videoTitle = document.querySelector("title")?.textContent || "";
+        const videoUrl = window.location.href;
+        saveNote({
+          videoTitle,
+          videoUrl,
+          currentTime,
+          note,
+          timestamp: new Date().toLocaleString(),
+        });
+        loadYouTubeNotes(); // Ensure notes are reloaded after adding a new one
+      }
+    }
+  };
+  youtubeNotesContainer.appendChild(addNoteButton);
 }
 
 window.initializeSidebar = initializeSidebar;

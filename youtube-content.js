@@ -31,7 +31,7 @@ function createNoteButton() {
       }
     }
   });
-  document.body.appendChild(button);
+  //document.body.appendChild(button);
 }
 
 
